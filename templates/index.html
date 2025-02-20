@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="quote-banner">
+    <p>{{ quote }}</p>
+</div>
+
+<h1 class="mt-4">{{ current_user.username }}'s Gratitude Journal</h1>
+
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="journal-tab" data-bs-toggle="tab" data-bs-target="#journal" type="button" role="tab" aria-controls="journal" aria-selected="true">Journal Entries</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <a class="nav-link" href="{{ url_for('mood_chart') }}">Mood Chart</a>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="ai-insights-tab" data-bs-toggle="tab" data-bs-target="#ai-insights" type="button" role="tab" aria-controls="ai-insights" aria-selected="false">AI Insights</button>
+  </li>
+</ul>
+
+<div class="tab-content" id="myTabContent">
+  <div class="tab-pane fade show active" id="journal" role="tabpanel" aria-labelledby="journal-tab">
+    <form action="{{ url_for('add_entry') }}" method="post" class="mb-4 mt-3">
+        <div class="form-group">
+            <label for="content">What are you grateful for today?</label>
+            <textarea name="content" id="content" class="form-control" rows="4" required></textarea>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="mood">How do you feel?</label>
+                <select name="mood" id="mood" class="form-control" required>
+                    <option value="Sad">Sad</option>
+                    <option value="Neutral">Neutral</option>
+                    <option value="Calm">Calm</option>
+                    <option value="Grateful">Grateful</option>
+                    <option value="Happy">Happy</option>
+                    <option value="Excited">Excited</option>
+                </select>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="date">Date</label>
+                <input type="date" name="date" id="date" class="form-control" required>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Add Entry</button>
+    </form>
+
+    <h2>Your Journal Entries</h2>
+    <div class="row">
+        {% for entry in entries %}
+            <div class="col-md-6">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ entry.date.strftime('%Y-%m-%d %H:%M') }}</h5>
+                        <p class="card-text">{{ entry.content }}</p>
+                        <p class="card-text"><small class="text-muted">Mood: {{ entry.mood }}</small></p>
+                        <a href="{{ url_for('edit_entry', entry_id=entry.id) }}" class="btn btn-sm btn-primary">Edit</a>
+                        <form action="{{ url_for('delete_entry', entry_id=entry.id) }}" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+  </div>
+  
+  <div class="tab-pane fade" id="ai-insights" role="tabpanel" aria-labelledby="ai-insights-tab">
+    <h2 class="mt-3">AI Suggestions for Gratitude</h2>
+    <ul>
+    {% for suggestion in ai_suggestions %}
+      <li>{{ suggestion }}</li>
+    {% endfor %}
+    </ul>
+  </div>
+</div>
+
+{% endblock %}

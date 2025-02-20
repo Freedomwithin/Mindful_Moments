@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="mt-4">Your Mood Trend</h2>
+
+<style>
+#chartContainer {
+    position: relative;
+    height: 800px; /* Adjust this value for desired height */
+    width: 100%;
+}
+</style>
+
+<div id="chartContainer">
+  <canvas id="moodChart"></canvas>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const ctx = document.getElementById('moodChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: {{ dates | tojson | safe }},
+      datasets: [{
+        label: 'Mood Trend',
+        data: {{ mood_values | tojson | safe }},
+        borderColor: 'rgb(75, 192, 192)',
+        tension: 0.1
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: 5,
+          title: {
+            display: true,
+            text: 'Mood (1: Sad, 5: Happy)'
+          }
+        },
+        x: {
+          title: {
+            display: true,
+            text: 'Date'
+          }
+        }
+      }
+    }
+  });
+});
+</script>
+{% endblock %}

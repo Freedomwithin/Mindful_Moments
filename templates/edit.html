@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Journal Entry</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}?v=1.0">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        textarea, select, button {
+            font-size: 16px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        button {
+            background-color: #0066cc;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Edit Entry</h1>
+        <form action="{{ url_for('edit_entry', entry_id=entry.id) }}" method="POST">
+            <textarea name="content" required>{{ entry.content }}</textarea>
+            <select name="mood">
+                <option value="Happy" {% if entry.mood == 'Happy' %}selected{% endif %}>Happy</option>
+                <option value="Neutral" {% if entry.mood == 'Neutral' %}selected{% endif %}>Neutral</option>
+                <option value="Sad" {% if entry.mood == 'Sad' %}selected{% endif %}>Sad</option>
+            </select>
+            <button type="submit">Save Changes</button>
+        </form>
+    </div>
+</body>
+</html>

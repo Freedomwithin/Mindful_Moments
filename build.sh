@@ -32,6 +32,7 @@ fi
 # Upgrade pip and install requirements
 echo "Upgrading pip and installing requirements..."
 pip install --upgrade pip
+pip install Flask-SQLAlchemy
 pip install -r requirements.txt
 
 # Print Python version and installed packages

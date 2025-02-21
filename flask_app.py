@@ -1,16 +1,15 @@
 import os
 import logging
 from flask import Flask, request, render_template, redirect, url_for, flash, jsonify
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from flask_login import login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import datetime
 from textblob import TextBlob
 import joblib
 from config import Config
-from models import db, User, JournalEntry
+from extensions import db, migrate, login_manager
+from models import User, JournalEntry
 
 app = Flask(__name__)
 
@@ -27,8 +26,8 @@ app.config.from_object(Config)
 
 # Initialize extensions
 db.init_app(app)
-migrate = Migrate(app, db)
-login_manager = LoginManager(app)
+migrate.init_app(app, db)
+login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 # Load the trained model

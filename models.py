@@ -1,5 +1,6 @@
+from extensions import db
 from flask_login import UserMixin
-from flask_app import db
+from datetime import datetime
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -9,8 +10,8 @@ class User(UserMixin, db.Model):
 
 class JournalEntry(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.Text, nullable=False)
-    date = db.Column(db.DateTime, nullable=False)
-    mood = db.Column(db.String(50), nullable=True)
+    content = db.Column(db.String(500), nullable=False)
+    mood = db.Column(db.String(100), nullable=True)
+    date = db.Column(db.DateTime, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     sentiment_score = db.Column(db.Float, nullable=True)

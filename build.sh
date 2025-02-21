@@ -21,6 +21,12 @@ echo "Upgrading pip and installing requirements..."
 pip install --upgrade pip
 pip install -r requirements.txt
 
+# Load environment variables
+echo "Loading environment variables..."
+set -a
+source .env
+set +a
+
 # Initialize and apply database migrations
 echo "Initializing and applying database migrations..."
 flask db init || true  # Initialize if not already initialized

@@ -15,4 +15,4 @@ class JournalEntry(db.Model):
     date = db.Column(db.DateTime, nullable=False)
     mood = db.Column(db.String(50), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-t_score = db.Column(db.Float, nullable=True)
+    sentiment_score = db.Column(db.Float, nullable=True)

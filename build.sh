@@ -16,19 +16,9 @@ source venv/bin/activate
 export FLASK_APP=flask_app.py
 echo "FLASK_APP set to $FLASK_APP"
 
-# Verify DATABASE_URL is set
-if [ -z "$DATABASE_URL" ]; then
-    echo "Warning: DATABASE_URL is not set. Please ensure it's set in your Render dashboard."
-else
-    echo "DATABASE_URL is set"
-fi
-
-# Check if SECRET_KEY is set, if not, generate a random one
-if [ -z "$SECRET_KEY" ]; then
-    echo "SECRET_KEY is not set. Generating a random one."
-    export SECRET_KEY=$(python -c 'import os; print(os.urandom(16).hex())')
-fi
-echo "SECRET_KEY is set"
+# Debug: Print environment variables
+echo "DEBUG: Environment variables:"
+env | grep -E "DATABASE_URL|SQLALCHEMY_DATABASE_URI|SECRET_KEY|FLASK_DEBUG"
 
 # Upgrade pip and install requirements
 echo "Upgrading pip and installing requirements..."

@@ -20,23 +20,6 @@ echo "FLASK_APP set to $FLASK_APP"
 echo "DEBUG: Environment variables:"
 env | grep -E "DATABASE_URL|SQLALCHEMY_DATABASE_URI|SECRET_KEY|FLASK_DEBUG"
 
-# Upgrade pip and install requirements
-echo "Upgrading pip and installing requirements..."
-pip install --upgrade pip
-pip install -r requirements.txt
-
-# Print Python version and installed packages
-echo "DEBUG: Python version:"
-python --version
-echo "DEBUG: Installed packages:"
-pip list
-
-# Initialize and apply database migrations
-echo "Initializing and applying database migrations..."
-flask db init || true  # Initialize if not already initialized
-flask db migrate -m "Migration from build script"
-flask db upgrade
-
-echo "Build process completed."
-
-# Note: We're not deactivating the virtual environment here
+# Check if models.py exists
+echo "DEBUG: Checking for models.py"
+if [ -f "models.

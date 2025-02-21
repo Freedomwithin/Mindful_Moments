@@ -16,15 +16,21 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Print debug information
 print(f"DEBUG: SQLALCHEMY_DATABASE_URI = {app.config['SQLALCHEMY_DATABASE_URI']}")
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
 
 # Load the rest of the configuration
 app.config.from_object(Config)
-# Import your models here
+
+# Initialize db
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
+
+# Import models after db initialization
 from models import User, JournalEntry
 
 # The rest of your Flask app code...
+
+if __name__ == '__main__':
+    app.run(debug=True)
 
 if __name__ == '__main__':
     app.run(debug=True)

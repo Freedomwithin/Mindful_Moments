@@ -18,13 +18,16 @@ load_dotenv()
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 
-# Create Flask app
-app = Flask(__name__, static_folder="static")
-app.config.from_object(Config)
+app = Flask(__name__)
+app.config.from_object('config')
 
-# Initialize extensions
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+
+# Import your models here
+# from models import YourModel
+
+# Initialize extensions
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 

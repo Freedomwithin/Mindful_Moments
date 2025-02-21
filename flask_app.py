@@ -11,6 +11,9 @@ from config import Config
 from extensions import db, migrate, login_manager
 from models import User, JournalEntry
 
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+
 app = Flask(__name__)
 
 # Database configuration
@@ -33,6 +36,10 @@ login_manager.login_view = 'login'
 # Load the trained model
 loaded_model = joblib.load('gratitude_model.joblib')
 
+# Log database URL and debug mode
+logging.info(f"Database URL: {app.config['SQLALCHEMY_DATABASE_URI']}")
+logging.info(f"Debug mode: {app.config['DEBUG']}")
+
 # Helper functions
 @login_manager.user_loader
 def load_user(user_id):
@@ -54,7 +61,7 @@ def get_gratitude_suggestions(prompt):
         suggestions = loaded_model.predict([prompt])
         return suggestions
     except Exception as e:
-        print(f"Error generating suggestions: {e}")
+        logging.error(f"Error generating suggestions: {e}")
         return ["Unable to generate suggestions at this time."]
 
 def analyze_sentiment(text):
@@ -112,16 +119,27 @@ def add_entry():
     if request.method == 'POST':
         content = request.form.get('content')
         mood = request.form.get('mood')
+        date = request.form.get('date')
         sentiment_score = analyze_sentiment(content)
-        new_entry = JournalEntry(content=content, mood=mood, user_id=current_user.id, sentiment_score=sentiment_score)
+        suggestions = get_gratitude_suggestions(content)
+        
+        new_entry = JournalEntry(
+            content=content, 
+            mood=mood, 
+            date=datetime.strptime(date, '%Y-%m-%d'),
+            user_id=current_user.id, 
+            sentiment_score=sentiment_score
+        )
+        
         try:
             db.session.add(new_entry)
             db.session.commit()
-            return redirect(url_for('index'))
+            return render_template('entry_added.html', sentiment_score=sentiment_score, suggestions=suggestions)
         except SQLAlchemyError as e:
             db.session.rollback()
             flash('An error occurred. Please try again.')
             logging.error(f"Database error: {str(e)}")
+    
     return render_template('add_entry.html')
 
 @app.route('/mood_chart')

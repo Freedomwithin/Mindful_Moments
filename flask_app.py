@@ -10,6 +10,7 @@ import os
 import joblib
 from textblob import TextBlob
 from config import Config
+from sqlalchemy.exc import SQLAlchemyError
 
 # Load environment variables
 load_dotenv()
@@ -107,10 +108,15 @@ def register():
             flash('Username already exists')
         else:
             new_user = User(username=username, password=generate_password_hash(password))
-            db.session.add(new_user)
-            db.session.commit()
-            login_user(new_user)
-            return redirect(url_for('index'))
+            try:
+                db.session.add(new_user)
+                db.session.commit()
+                login_user(new_user)
+                return redirect(url_for('index'))
+            except SQLAlchemyError as e:
+                db.session.rollback()
+                flash('An error occurred. Please try again.')
+                logging.error(f"Database error: {str(e)}")
     return render_template('register.html')
 
 @app.route('/add_entry', methods=['GET', 'POST'])
@@ -121,9 +127,14 @@ def add_entry():
         mood = request.form.get('mood')
         sentiment_score = analyze_sentiment(content)
         new_entry = JournalEntry(content=content, mood=mood, user_id=current_user.id, sentiment_score=sentiment_score)
-        db.session.add(new_entry)
-        db.session.commit()
-        return redirect(url_for('index'))
+        try:
+            db.session.add(new_entry)
+            db.session.commit()
+            return redirect(url_for('index'))
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            flash('An error occurred. Please try again.')
+            logging.error(f"Database error: {str(e)}")
     return render_template('add_entry.html')
 
 @app.route('/mood_chart')
@@ -161,10 +172,15 @@ def api_register():
     if user:
         return jsonify({"success": False, "message": "Username already exists"}), 400
     new_user = User(username=username, password=generate_password_hash(password))
-    db.session.add(new_user)
-    db.session.commit()
-    login_user(new_user)
-    return jsonify({"success": True, "message": "Registered successfully"})
+    try:
+        db.session.add(new_user)
+        db.session.commit()
+        login_user(new_user)
+        return jsonify({"success": True, "message": "Registered successfully"})
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        logging.error(f"Database error: {str(e)}")
+        return jsonify({"success": False, "message": "An error occurred. Please try again."}), 500
 
 @app.route('/api/add_entry', methods=['POST'])
 @login_required
@@ -174,9 +190,14 @@ def api_add_entry():
     mood = data.get('mood')
     sentiment_score = analyze_sentiment(content)
     new_entry = JournalEntry(content=content, mood=mood, user_id=current_user.id, sentiment_score=sentiment_score)
-    db.session.add(new_entry)
-    db.session.commit()
-    return jsonify({"success": True, "message": "Entry added successfully"})
+    try:
+        db.session.add(new_entry)
+        db.session.commit()
+        return jsonify({"success": True, "message": "Entry added successfully"})
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        logging.error(f"Database error: {str(e)}")
+        return jsonify({"success": False, "message": "An error occurred. Please try again."}), 500
 
 @app.route('/api/entries')
 @login_required
@@ -193,6 +214,10 @@ def api_entries():
             } for entry in entries
         ]
     })
+
+@app.route('/health')
+def health_check():
+    return jsonify({"status": "healthy"}), 200
 
 # Initialize Flask-Migrate
 with app.app_context():

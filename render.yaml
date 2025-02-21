@@ -2,8 +2,8 @@ services:
   - type: web
     name: gratitude-journal
     env: python
-    buildCommand: ./build.sh
-    startCommand: gunicorn flask_app:app
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn wsgi:app
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
@@ -14,7 +14,9 @@ services:
       - key: SECRET_KEY
         generateValue: true
       - key: DATABASE_URL
-        value: sqlite:///gratitude_journal.db
+        fromDatabase:
+          name: gratitude-journal-db
+          property: connectionString
     healthCheckPath: /health
     autoDeploy: true
 
@@ -22,12 +24,7 @@ databases:
   - name: gratitude-journal-db
     databaseName: gratitude_journal
     user: gratitude_user
-
-# Uncomment the following if you decide to use PostgreSQL instead of SQLite
-# - type: postgres
-#   name: gratitude-journal-db
-#   ipAllowList: []
-#   plan: free
+    plan: free
 
 # Static file hosting
 staticPublishPath: ./static

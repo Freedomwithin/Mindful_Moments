@@ -23,8 +23,9 @@ pip install -r requirements.txt
 
 # Initialize and apply database migrations
 echo "Initializing and applying database migrations..."
-flask db init
-flask db migrate -m "Initial migration"
+flask db init || true  # Initialize if not already initialized
+flask db stamp 3e87750d69ef || true  # Stamp the database with the known good migration
+flask db migrate -m "Migration from build script"
 flask db upgrade
 
 echo "Build process completed."

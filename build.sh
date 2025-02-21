@@ -41,11 +41,33 @@ python --version
 echo "DEBUG: Installed packages:"
 pip list
 
+# Debug: Print directory contents
+echo "DEBUG: Current directory contents:"
+ls -la
+echo "DEBUG: Migrations directory contents (if exists):"
+ls -la migrations/versions/ || echo "Migrations directory does not exist yet"
+
+# Debug: Print Database URL
+echo "DEBUG: Database URL:"
+echo $DATABASE_URL
+
 # Initialize and apply database migrations
 echo "Initializing and applying database migrations..."
 flask db init || true  # Initialize if not already initialized
-flask db migrate -m "Migration from build script"
-flask db upgrade
+flask db migrate -m "Migration from build script" || true
+flask db upgrade || true
+
+# Debug: Print migration history
+echo "DEBUG: Migration history:"
+flask db history || echo "No migration history available"
+
+# Manually create database tables if needed
+echo "Creating database tables..."
+python << END
+from flask_app import app, db
+with app.app_context():
+    db.create_all()
+END
 
 echo "Build process completed."
 

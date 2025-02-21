@@ -1,35 +1,33 @@
-import logging
-from dotenv import load_dotenv
-from flask import Flask, render_template, jsonify, request, redirect, url_for, flash
+import os
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
-from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
-import os
-import joblib
-from textblob import TextBlob
 from config import Config
-from sqlalchemy.exc import SQLAlchemyError
-
-# Load environment variables
-load_dotenv()
-
-# Configure logging
-logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
-app.config.from_object('config')
 
+# Explicitly set the SQLALCHEMY_DATABASE_URI
+database_url = os.environ.get('DATABASE_URL')
+if database_url and database_url.startswith("postgres://"):
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url or 'sqlite:///instance/journal.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Print debug information
+print(f"DEBUG: SQLALCHEMY_DATABASE_URI = {app.config['SQLALCHEMY_DATABASE_URI']}")
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
+# Load the rest of the configuration
+app.config.from_object(Config)
 # Import your models here
-# from models import YourModel
+from models import User, JournalEntry
 
-# Initialize extensions
-login_manager = LoginManager(app)
-login_manager.login_view = 'login'
+# The rest of your Flask app code...
+
+if __name__ == '__main__':
+    app.run(debug=True)
 
 # User model
 class User(UserMixin, db.Model):

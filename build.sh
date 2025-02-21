@@ -16,15 +16,6 @@ source venv/bin/activate
 export FLASK_APP=flask_app.py
 echo "FLASK_APP set to $FLASK_APP"
 
-# Explicitly set SQLALCHEMY_DATABASE_URI
-if [ -n "$DATABASE_URL" ]; then
-    export SQLALCHEMY_DATABASE_URI="$DATABASE_URL"
-    echo "SQLALCHEMY_DATABASE_URI set to $SQLALCHEMY_DATABASE_URI"
-else
-    echo "WARNING: DATABASE_URL is not set. Using SQLite as fallback."
-    export SQLALCHEMY_DATABASE_URI="sqlite:///instance/journal.db"
-fi
-
 # Debug: Print environment variables
 echo "DEBUG: Environment variables:"
 env | grep -E "DATABASE_URL|SQLALCHEMY_DATABASE_URI|SECRET_KEY|FLASK_DEBUG"
@@ -33,6 +24,12 @@ env | grep -E "DATABASE_URL|SQLALCHEMY_DATABASE_URI|SECRET_KEY|FLASK_DEBUG"
 echo "Upgrading pip and installing requirements..."
 pip install --upgrade pip
 pip install -r requirements.txt
+
+# Print Python version and installed packages
+echo "DEBUG: Python version:"
+python --version
+echo "DEBUG: Installed packages:"
+pip list
 
 # Initialize and apply database migrations
 echo "Initializing and applying database migrations..."

@@ -1,12 +1,19 @@
 import os
-from flask import Flask
+import logging
+from flask import Flask, request, render_template, redirect, url_for, flash, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_login import UserMixin, LoginManager, login_user, login_required, logout_user, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy.exc import SQLAlchemyError
+from datetime import datetime
+from textblob import TextBlob
+import joblib
 from config import Config
 
 app = Flask(__name__)
 
-# Explicitly set the SQLALCHEMY_DATABASE_URI
+# Database configuration
 database_url = os.environ.get('DATABASE_URL')
 if database_url and database_url.startswith("postgres://"):
     database_url = database_url.replace("postgres://", "postgresql://", 1)
@@ -14,35 +21,22 @@ if database_url and database_url.startswith("postgres://"):
 app.config['SQLALCHEMY_DATABASE_URI'] = database_url or 'sqlite:///instance/journal.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Print debug information
-print(f"DEBUG: SQLALCHEMY_DATABASE_URI = {app.config['SQLALCHEMY_DATABASE_URI']}")
-
 # Load the rest of the configuration
 app.config.from_object(Config)
 
-# Initialize db
+# Initialize extensions
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+login_manager = LoginManager(app)
+login_manager.login_view = 'login'
 
-# Import models after db initialization
-from models import User, JournalEntry
-
-# The rest of your Flask app code...
-
-if __name__ == '__main__':
-    app.run(debug=True)
-
-if __name__ == '__main__':
-    app.run(debug=True)
-
-# User model
+# Models
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)
     password = db.Column(db.String(150), nullable=False)
     journal_entries = db.relationship('JournalEntry', backref='author', lazy=True)
 
-# Journal Entry model
 class JournalEntry(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String(500), nullable=False)
@@ -51,6 +45,7 @@ class JournalEntry(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     sentiment_score = db.Column(db.Float, nullable=True)
 
+# Helper functions
 @login_manager.user_loader
 def load_user(user_id):
     return db.session.get(User, int(user_id))
@@ -81,7 +76,7 @@ def analyze_sentiment(text):
     analysis = TextBlob(text)
     return analysis.sentiment.polarity
 
-# Route definitions
+# Routes
 @app.route('/')
 def index():
     if current_user.is_authenticated:

@@ -1,4 +1,4 @@
-# Gratitude Journal 
+# Mindful Moments
 
 The Gratitude Journal is an innovative mobile application designed to enhance users' well-being by encouraging the practice of daily gratitude. At its core, the app utilizes advanced machine learning techniques to automatically categorize users' gratitude entries, providing insightful analytics about the areas of life for which they are most grateful.
 
@@ -68,8 +68,8 @@ This Gratitude Journal app represents a unique blend of user-centric design and 
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/Freedomwithin/gratitude-journal.git
-   cd gratitude-journal
+   git clone https://github.com/Freedomwithin/Mindful_Moments
+   cd mindful-moments
 
 2. Create a virtual environment and activate it:
    ```bash
@@ -101,7 +101,7 @@ This Gratitude Journal app represents a unique blend of user-centric design and 
 2. Use the following settings:
 - Environment: Python 3
 - Build Command: `pip install --upgrade pip && pip install -r requirements.txt`
-- Start Command: `gunicorn app:app`
+- Start Command: `gunicorn wsgi:app`
 
 3. Add the following environment variables:
 - `PYTHON_VERSION`: 3.9.0 (or your preferred Python version)

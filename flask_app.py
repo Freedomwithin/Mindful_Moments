@@ -3,13 +3,14 @@ import logging
 from flask import Flask, request, render_template, redirect, url_for, flash, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_login import UserMixin, LoginManager, login_user, login_required, logout_user, current_user
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import datetime
 from textblob import TextBlob
 import joblib
 from config import Config
+from models import db, User, JournalEntry
 
 app = Flask(__name__)
 
@@ -25,30 +26,18 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config.from_object(Config)
 
 # Initialize extensions
-db = SQLAlchemy(app)
+db.init_app(app)
 migrate = Migrate(app, db)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
-# Models
-class User(UserMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(150), unique=True, nullable=False)
-    password = db.Column(db.String(150), nullable=False)
-    journal_entries = db.relationship('JournalEntry', backref='author', lazy=True)
-
-class JournalEntry(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.String(500), nullable=False)
-    mood = db.Column(db.String(100), nullable=True)
-    date = db.Column(db.DateTime, default=datetime.utcnow)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    sentiment_score = db.Column(db.Float, nullable=True)
+# Load the trained model
+loaded_model = joblib.load('gratitude_model.joblib')
 
 # Helper functions
 @login_manager.user_loader
 def load_user(user_id):
-    return db.session.get(User, int(user_id))
+    return User.query.get(int(user_id))
 
 def mood_to_value(mood):
     mood_values = {
@@ -60,9 +49,6 @@ def mood_to_value(mood):
         'Excited': 5
     }
     return mood_values.get(mood, 3)  # Default to Neutral if mood not found
-
-# Load the trained model
-loaded_model = joblib.load('gratitude_model.joblib')
 
 def get_gratitude_suggestions(prompt):
     try:

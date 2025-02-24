@@ -8,21 +8,22 @@ services:
     # Combined build command with database migrations
     buildCommand: >-
       pip install --upgrade pip;
+      pip install Flask-Migrate;
+      source venv/bin/activate;  # Activate virtual environment
       flask db init;
-      flask db migrate -m "Latest Updates";
-      flask db upgrades; 
-      source venv/bin/activate;
-      pip install -r requirements.txt;
-      pip install --upgrade pip
+      flask db migrate -m "Initial migration";
+      flask db upgrade;
+      # pip install -r requirements.txt;  # No need to install dependencies again
+      # pip install --upgrade pip;  # Already upgraded earlier
 
     startCommand: gunicorn wsgi:app
-    repo: https://github.com/your-username/your-repo-name  # Replace with your actual repo
+    repo: https://github.com/Freedomwithin/Mindful_Moments  # Replace with your actual repo
 
     envVars:
       - key: DATABASE_URL
         value: postgresql://gratitude_journal_db_user:K98caJwDtWPEVjqfE50c928k6PJ4aU45@dpg-curavejv2p9s73afk0qg-a/gratitude_journal_db
       - key: SECRET_KEY
-        value: wxWu7gnoa1CaigNitd3Cop0XV2P4v4oUTDgzkLCR-_M  # Replace if needed
+        value: K98caJwDtWPEVjqfE50c928k6PJ4aU45
       - key: FLASK_CONFIG
         value: production
       - key: FLASK_APP

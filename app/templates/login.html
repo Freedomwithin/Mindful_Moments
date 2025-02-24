@@ -5,21 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Login - My Journal App{% endblock %}</title>
 
-    <!-- Bootstrap CSS (Stable Version) -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Custom Styles (must be placed AFTER Bootstrap so it can override styles) -->
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}?v=1.0">
 
     <style>
-        /* ... (keep the existing styles) ... */
+        /*... (keep the existing styles)... */
     </style>
 </head>
 <body>
     <div class="login-card">
         <h3 class="text-center mb-4">Welcome Back</h3>
 
-        <!-- Flash messages -->
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
@@ -30,16 +27,14 @@
             {% endif %}
         {% endwith %}
 
-        <form method="POST">
-            {{ form.hidden_tag() }}
+        <form method="POST" action="{{ url_for('auth.login') }}">  {{ form.hidden_tag() }}
             <div class="mb-3">
                 {{ form.username.label(class="form-label") }}
                 {{ form.username(class="form-control", required=true, autofocus=true) }}
             </div>
             <div class="mb-3 password-wrapper">
                 {{ form.password.label(class="form-label") }}
-                {{ form.password(class="form-control", required=true) }}
-                <span class="toggle-password" onclick="togglePassword()" aria-label="Toggle password visibility">👁️</span>
+                {{ form.password(class="form-control", id="password", required=true) }}  <span class="toggle-password" onclick="togglePassword()" aria-label="Toggle password visibility">👁️</span>
             </div>
             {{ form.submit(class="btn btn-primary w-100") }}
         </form>

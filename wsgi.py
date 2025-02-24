@@ -1,27 +1,7 @@
 import os
-from flask import Flask
-from dotenv import load_dotenv
-from.extensions import init_extensions
-from.config import config  # Import your 'config' dictionary
+from app import create_app  # Import create_app from app/__init__.py
 
-load_dotenv()  # For local development
+config_name = os.getenv('FLASK_CONFIG') or 'production'  # Get config name from environment
+app = create_app(config_name)  # Create the Flask app instance
 
-def create_app(config_name=None):
-    if config_name is None:
-        config_name = os.getenv('FLASK_CONFIG') or 'default'
-    app = Flask(__name__)
-    app.config.from_object(config[config_name])
-
-    init_extensions(app)
-
-    from.main.routes import main
-    from.auth.routes import auth
-    app.register_blueprint(main, url_prefix='/')
-    app.register_blueprint(auth, url_prefix='/auth')
-
-    # Health check endpoint (for Render)
-    @app.route('/ping')
-    def ping():
-        return 'pong'
-
-    return app
+# No app.run() here! Render handles the running of the app.

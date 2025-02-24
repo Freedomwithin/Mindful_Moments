@@ -2,33 +2,39 @@ import os
 from flask import Flask
 from dotenv import load_dotenv
 from.extensions import init_extensions
-from.config import config  # Import your 'config' dictionary
+from.config import config
 
-load_dotenv()  # For local development; Render will use environment variables
+# Load environment variables from.env locally (not needed on Render)
+load_dotenv()  
 
 def create_app(config_name=None):
     if config_name is None:
-        config_name = os.getenv('FLASK_CONFIG') or 'default'  # Get config name from environment or use default
+        config_name = os.getenv('FLASK_CONFIG') or 'default'
     app = Flask(__name__)
-    app.config.from_object(config[config_name])  # Load config from your 'config' dictionary
+    app.config.from_object(config[config_name])
 
-    # No need to set app.debug here; it's controlled by the configuration
+    # Enable CSRF protection in production
+    if app.config['ENV'] == 'production':
+        app.config['WTF_CSRF_ENABLED'] = True 
 
-    # Consider enabling CSRF protection for production:
-    # if app.config['ENV'] == 'production':
-    #     app.config['WTF_CSRF_ENABLED'] = True
+    # Get the secret key from environment variables
+    secret_key = os.environ.get('SECRET_KEY')
+    if not secret_key:
+        raise ValueError("No SECRET_KEY set. Set it in Render environment variables.")
+    app.config['SECRET_KEY'] = secret_key
 
-    SECRET_KEY = os.environ.get("SECRET_KEY")
-    if not SECRET_KEY:
-        # You might want to use a logging mechanism here for production
-        raise ValueError("No SECRET_KEY set. Set it in Render environment variables")
-    app.config['SECRET_KEY'] = SECRET_KEY
-
+    # Initialize Flask extensions
     init_extensions(app)
 
+    # Register blueprints
     from.main.routes import main
     from.auth.routes import auth
     app.register_blueprint(main, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/auth')
+
+    # Health check endpoint (for Render)
+    @app.route('/ping')
+    def ping():
+        return 'pong'
 
     return app

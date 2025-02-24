@@ -10,11 +10,12 @@ services:
       pip install --upgrade pip;
       pip install Flask-Migrate;
       source venv/bin/activate;  # Activate virtual environment
+      pip install --upgrade pip;  
       flask db init;
       flask db migrate -m "Initial migration";
       flask db upgrade;
       # pip install -r requirements.txt;  # No need to install dependencies again
-      # pip install --upgrade pip;  # Already upgraded earlier
+     
 
     startCommand: gunicorn wsgi:app
     repo: https://github.com/Freedomwithin/Mindful_Moments  # Replace with your actual repo

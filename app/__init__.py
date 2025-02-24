@@ -1,11 +1,8 @@
 import os
 from flask import Flask
-from dotenv import load_dotenv
-from.extensions import init_extensions
-from.config import config
-
-# Load environment variables from.env locally (not needed on Render)
-load_dotenv()  
+from .extensions import init_extensions  # Correct relative import
+from .config import config  # Correct relative import
+from flask_migrate import Migrate
 
 def create_app(config_name=None):
     if config_name is None:
@@ -13,26 +10,28 @@ def create_app(config_name=None):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
 
-    # Enable CSRF protection in production
     if app.config['ENV'] == 'production':
-        app.config['WTF_CSRF_ENABLED'] = True 
+        app.config['WTF_CSRF_ENABLED'] = True
 
-    # Get the secret key from environment variables
     secret_key = os.environ.get('SECRET_KEY')
     if not secret_key:
         raise ValueError("No SECRET_KEY set. Set it in Render environment variables.")
     app.config['SECRET_KEY'] = secret_key
 
-    # Initialize Flask extensions
-    init_extensions(app)
+    # Database Configuration (Corrected - using app.root_path):
+    db_path = os.path.join(app.root_path, 'your_database.db')  # Or my_database.db if renamed
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + db_path  # 3 slashes are essential
 
-    # Register blueprints
-    from.main.routes import main
-    from.auth.routes import auth
+    init_extensions(app)  # Initialize extensions *after* setting the URI
+
+    from .models import db  # Correct relative import
+    migrate = Migrate(app, db)  # Initialize Migrate *after* db is initialized with app
+
+    from .main.routes import main  # Correct relative import
+    from .auth.routes import auth  # Correct relative import
     app.register_blueprint(main, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/auth')
 
-    # Health check endpoint (for Render)
     @app.route('/ping')
     def ping():
         return 'pong'

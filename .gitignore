@@ -2,10 +2,14 @@
 __pycache__/
 
 # Virtual environment
+venv/
 
 # Log files
 logs/
 
 # Database files
+*.db  # Or the specific name of your database file
 
-# Environment variables  <-- Added.env.env
+# Environment variables.env
+
+# Other files or directories you want to ignore...

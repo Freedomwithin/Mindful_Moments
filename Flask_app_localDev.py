@@ -12,20 +12,22 @@ from extensions import db, migrate, login_manager
 from models import User, JournalEntry
 
 # Configure logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)  # Changed from INFO to DEBUG
 
 app = Flask(__name__)
 
-# Database configuration
-database_url = os.environ.get('DATABASE_URL')
-if database_url and database_url.startswith("postgres://"):
-    database_url = database_url.replace("postgres://", "postgresql://", 1)
-
-app.config['SQLALCHEMY_DATABASE_URI'] = database_url or 'sqlite:///instance/journal.db'
+# Force SQLite for local development
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///instance/journal_local.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Load the rest of the configuration
 app.config.from_object(Config)
+
+# Override the DATABASE_URL from environment or Config
+os.environ['DATABASE_URL'] = app.config['SQLALCHEMY_DATABASE_URI']
+
+# Enable debug mode for local development
+app.config['DEBUG'] = True
 
 # Initialize extensions
 db.init_app(app)
@@ -34,9 +36,13 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 # Load the trained model
-loaded_model = joblib.load('gratitude_model.joblib')
+try:
+    loaded_model = joblib.load('gratitude_model.joblib')
+except FileNotFoundError:
+    logging.error("Model file not found. Please ensure 'gratitude_model.joblib' exists.")
+    loaded_model = None
 
-# Log database URL and debug mode
+# Log configuration
 logging.info(f"Database URL: {app.config['SQLALCHEMY_DATABASE_URI']}")
 logging.info(f"Debug mode: {app.config['DEBUG']}")
 
@@ -57,12 +63,13 @@ def mood_to_value(mood):
     return mood_values.get(mood, 3)  # Default to Neutral if mood not found
 
 def get_gratitude_suggestions(prompt):
-    try:
-        suggestions = loaded_model.predict([prompt])
-        return suggestions
-    except Exception as e:
-        logging.error(f"Error generating suggestions: {e}")
-        return ["Unable to generate suggestions at this time."]
+    if loaded_model:
+        try:
+            suggestions = loaded_model.predict([prompt])
+            return suggestions
+        except Exception as e:
+            logging.error(f"Error generating suggestions: {e}")
+    return ["Unable to generate suggestions at this time."]
 
 def analyze_sentiment(text):
     analysis = TextBlob(text)
@@ -247,15 +254,11 @@ def health_check():
 
 # Initialize Flask-Migrate
 with app.app_context():
-    if db.engine.url.drivername == 'sqlite':
-        migrate.init_app(app, db, render_as_batch=True)
-    else:
-        migrate.init_app(app, db)
+    migrate.init_app(app, db, render_as_batch=True)
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
     try:
-        app.run(host='0.0.0.0', port=port)
+        app.run(host='0.0.0.0', port=5000)
     except Exception as e:
         print(f"An error occurred: {e}")
         logging.exception("An error occurred while running the app")

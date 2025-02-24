@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Mood Trend - Gratitude Journal{% endblock %}
+
+{% block content %}
+<h2 class="mt-4">Your Mood Trend</h2>
+
+<div id="chartContainer">
+  {% if dates and mood_values %}
+    <canvas id="moodChart"></canvas>
+  {% else %}
+    <p>No mood data available. Start adding journal entries to see your mood trend!</p>
+  {% endif %}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  {% if dates and mood_values %}
+    const ctx = document.getElementById('moodChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: {{ dates | tojson | safe }},
+        datasets: [{
+          label: 'Mood Trend',
+          data: {{ mood_values | tojson | safe }},
+          borderColor: 'rgb(75, 192, 192)',
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          tension: 0.1,
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 5,
+            title: {
+              display: true,
+              text: 'Mood (1: Sad, 5: Happy)'
+            },
+            ticks: {
+              stepSize: 1
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: 'Date'
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            callbacks: {
+              title: function(tooltipItems) {
+                return 'Date: ' + tooltipItems[0].label;
+              },
+              label: function(context) {
+                let label = context.dataset.label || '';
+                if (label) {
+                    label += ': ';
+                }
+                if (context.parsed.y !== null) {
+                    label += context.parsed.y;
+                }
+                return label;
+              }
+            }
+          }
+        }
+      }
+    });
+  {% endif %}
+});
+</script>
+{% endblock %}
+
+{% block styles %}
+<style>
+#chartContainer {
+    position: relative;
+    height: 600px;
+    width: 100%;
+    margin-bottom: 2rem;
+}
+</style>
+{% endblock %}

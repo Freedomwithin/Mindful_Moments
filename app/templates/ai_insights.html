@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container ai-insights">
+    <h2 class="mb-4">AI Insights</h2>
+    
+    <p class="lead">
+        Based on your journal entries, our AI has generated the following insights to help you reflect on your gratitude journey:
+    </p>
+
+    {% if ai_suggestions %}
+        <ul class="list-group mt-4">
+        {% for suggestion in ai_suggestions %}
+            <li class="list-group-item">{{ suggestion }}</li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p class="alert alert-info">No AI insights available at this time. Try adding more journal entries!</p>
+    {% endif %}
+
+    <div class="mt-4">
+        <a href="{{ url_for('main.index') }}" class="btn btn-primary">Back to Journal</a>
+        <button id="refresh-insights" class="btn btn-secondary">Refresh Insights</button>
+    </div>
+
+    <p class="text-muted mt-3">
+        Insights last generated: {{ generation_time|default('N/A', true) }}
+    </p>
+</div>
+
+<script>
+    document.getElementById('refresh-insights').addEventListener('click', function() {
+        fetch('{{ url_for("main.ai_insights") }}')
+            .then(response => response.text())
+            .then(html => {
+                document.querySelector('.container.ai-insights').innerHTML = html;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while refreshing insights. Please try again.');
+            });
+    });
+</script>
+{% endblock %}

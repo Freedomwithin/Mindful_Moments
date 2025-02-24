@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Gratitude Journal{% endblock %}
+
+{% block content %}
+<div class="quote-banner">
+    <p>{{ quote }}</p>
+</div>
+
+<div class="container mt-5">
+    <h1>
+        {% if current_user.is_authenticated %}
+            {{ current_user.username }}'s Gratitude Journal
+        {% else %}
+            Welcome to Your Gratitude Journal
+        {% endif %}
+    </h1>
+
+    {% if current_user.is_authenticated %}
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="journal-tab" data-bs-toggle="tab" data-bs-target="#journal" type="button" role="tab" aria-controls="journal" aria-selected="true">Journal Entries</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" href="{{ url_for('main.mood_chart') }}">Mood Chart</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" href="{{ url_for('main.ai_insights') }}">AI Insights</a>
+            </li>
+        </ul>
+        <div class="tab-content mt-3" id="myTabContent">
+            <div class="tab-pane fade show active" id="journal" role="tabpanel" aria-labelledby="journal-tab">
+                <form id="addEntryForm" action="{{ url_for('main.add_entry') }}" method="post" class="mb-4 mt-3">
+                    <div class="form-group">
+                        <label for="content">What are you grateful for today?</label>
+                        <textarea name="content" id="content" class="form-control" rows="4" required></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label for="mood">How do you feel?</label>
+                            <select name="mood" id="mood" class="form-control" required>
+                                <option value="Sad">Sad</option>
+                                <option value="Neutral">Neutral</option>
+                                <option value="Calm">Calm</option>
+                                <option value="Grateful">Grateful</option>
+                                <option value="Happy">Happy</option>
+                                <option value="Excited">Excited</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="category">Category:</label>
+                            <select class="form-control" id="category" name="category" required>
+                                <option value="">Select a category</option>
+                                <option value="Personal">Personal</option>
+                                <option value="Work">Work</option>
+                                <option value="Family">Family</option>
+                                <option value="Health">Health</option>
+                                <option value="Relationships">Relationships</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="date">Date</label>
+                            <input type="date" name="date" id="date" class="form-control" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Add Entry</button>
+                </form>
+
+                <h2>Your Journal Entries</h2>
+                <div id="entriesContainer">
+                    {% for entry in entries %}
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ entry.date.strftime('%Y-%m-%d %H:%M') }}</h5>
+                                <p class="card-text">{{ entry.content }}</p>
+                                <p class="card-text"><small class="text-muted">Mood: {{ entry.mood }} | Category: {{ entry.category }}</small></p>
+                                <a href="{{ url_for('main.edit_entry', entry_id=entry.id) }}" class="btn btn-sm btn-primary">Edit</a>
+                                <form action="{{ url_for('main.delete_entry', entry_id=entry.id) }}" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <a href="{{ url_for('main.ai_insights') }}" class="btn btn-primary mt-3">AI Insights</a>
+
+    {% else %}
+        <p>Welcome! Please <a href="{{ url_for('auth.login') }}">log in</a> to start recording your gratitude.</p>
+        <p>Don't have an account? <a href="{{ url_for('auth.signup') }}">Sign Up</a></p>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const form = document.getElementById('addEntryForm');
+    form.addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent default form submission
+
+        fetch(form.action, {
+            method: form.method,
+            body: new FormData(form), // Use FormData to easily serialize form data
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message === 'Entry added successfully') {
+                // Redirect to the specified URL
+                window.location.href = data.redirect;
+            } else {
+                // Handle errors if necessary (e.g., display an error message)
+                console.error("Error adding entry:", data);
+                alert("An error occurred while adding the entry. Please try again.");
+            }
+        })
+        .catch(error => {
+            console.error("Error adding entry:", error);
+            alert("An error occurred while adding the entry. Please try again.");
+        });
+    });
+</script>
+{% endblock %}

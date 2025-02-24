@@ -1,30 +1,39 @@
 services:
   - type: web
-    name: gratitude-journal
+    name: mindful-moments-app
     env: python
-    buildCommand: chmod +x build.sh && ./build.sh
-    startCommand: gunicorn wsgi:app
-    envVars:
-      - key: PYTHON_VERSION
-        value: 3.11.0
-      - key: FLASK_APP
-        value: flask_app.py
-      - key: FLASK_ENV
-        value: production
-      - key: SECRET_KEY
-        generateValue: true
-      - key: DATABASE_URL
-        fromDatabase:
-          name: gratitude-journal-db
-          property: connectionString
-    healthCheckPath: /health
-    autoDeploy: true
-
-databases:
-  - name: gratitude-journal-db
-    databaseName: gratitude_journal
-    user: gratitude_user
     plan: free
 
-# Static file hosting
-staticPublishPath: ./static
+    # Combined build command with database migrations
+    buildCommand: >-
+      pip install --upgrade pip;
+      source venv/bin/activate;
+      pip install -r requirements.txt;
+      flask db init;
+      flask db migrate -m "Latest Updates";
+      flask db upgrades;
+
+    startCommand: gunicorn wsgi:app
+    repo: https://github.com/your-username/your-repo-name  # Replace with your actual repo
+
+    envVars:
+      - key: DATABASE_URL
+        value: postgresql://gratitude_journal_db_user:K98caJwDtWPEVjqfE50c928k6PJ4aU45@dpg-curavejv2p9s73afk0qg-a/gratitude_journal_db
+      - key: SECRET_KEY
+        value: wxWu7gnoa1CaigNitd3Cop0XV2P4v4oUTDgzkLCR-_M  # Replace if needed
+      - key: FLASK_CONFIG
+        value: production
+      - key: FLASK_APP
+        value: wsgi.py
+
+    healthCheckPath: /ping
+    forwardLogs: true
+
+    autoscaling:
+      minReplicas: 1
+      maxReplicas: 3
+      targetCPUPercentage: 75
+
+    # Optional: Add a custom domain
+    # customDomains:
+    #   - name: www.yourdomain.com

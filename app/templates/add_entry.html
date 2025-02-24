@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Entry Added Successfully</h2>
+    <div class="alert alert-success" role="alert">
+        Your journal entry has been added to your gratitude journal.
+    </div>
+
+    <h3>Entry Details</h3>
+    <p><strong>Content:</strong> {{ entry.content }}</p>
+    <p><strong>Mood:</strong> {{ entry.mood }}</p>
+    <p><strong>Category:</strong> {{ entry.category }}</p>
+
+    <h3>Sentiment Analysis</h3>
+    <p>The sentiment score of your entry is: <strong>{{ sentiment_score }}</strong></p>
+    <p>
+        {% if sentiment_score > 0.5 %}
+            Your entry seems very positive!
+        {% elif sentiment_score > 0 %}
+            Your entry seems somewhat positive.
+        {% elif sentiment_score == 0 %}
+            Your entry seems neutral.
+        {% elif sentiment_score > -0.5 %}
+            Your entry seems somewhat negative.
+        {% else %}
+            Your entry seems very negative. Remember, focusing on gratitude can help improve your mood!
+        {% endif %}
+    </p>
+
+    <h3>AI Suggestions for Gratitude</h3>
+    <p>Based on your entry, here are some things you might be grateful for:</p>
+    <ul>
+        {% for suggestion in suggestions %}
+            <li>{{ suggestion }}</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{{ url_for('main.index') }}" class="btn btn-primary">Back to Journal</a>
+</div>
+{% endblock %}

@@ -1,1 +1,11 @@
-/.env
+# Bytecode compiled files
+__pycache__/
+
+# Virtual environment
+
+# Log files
+logs/
+
+# Database files
+
+# Environment variables  <-- Added.env.env

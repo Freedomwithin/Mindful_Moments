@@ -15,7 +15,7 @@ services:
 
     envVars:
       - key: SECRET_KEY
-        value: K98caJwDtWPEVjqfE50c928k6PJ4aU45  # Use a strong, random secret key in production
+        value: Jht8k8bsgGrYc5wtyLV8pWVqclwqSc1b  # Use a strong, random secret key in production
 
     healthCheckPath: /ping
     forwardLogs: true

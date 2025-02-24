@@ -1,15 +1,3 @@
 # Bytecode compiled files
 __pycache__/
 
-# Virtual environment
-venv/
-
-# Log files
-logs/
-
-# Database files
-*.db  # Or the specific name of your database file
-
-# Environment variables.env
-
-# Other files or directories you want to ignore...

@@ -3,11 +3,12 @@ services:
     name: mindful-moments-app
     env: python
     plan: free
+    port: 5000
 
     # Combined build command with database migrations
     buildCommand: >-
       pip install --upgrade pip;
-       flask db init;
+      flask db init;
       flask db migrate -m "Latest Updates";
       flask db upgrades; 
       source venv/bin/activate;

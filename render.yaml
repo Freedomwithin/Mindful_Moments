@@ -7,6 +7,7 @@ services:
 
     build:
       - pip install -r requirements.txt  # Install requirements (including Flask-Migrate and psycopg2) FIRST
+      - flask db migrate  # Added this myself
       - flask db upgrade  # Run migrations AFTER requirements
 
     startCommand: gunicorn wsgi:app

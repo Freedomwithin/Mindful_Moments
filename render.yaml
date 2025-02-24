@@ -7,12 +7,12 @@ services:
     # Combined build command with database migrations
     buildCommand: >-
       pip install --upgrade pip;
-      pip install Flask-Migrate; 
+       flask db init;
+      flask db migrate -m "Latest Updates";
+      flask db upgrades; 
       source venv/bin/activate;
       pip install -r requirements.txt;
-      flask db init;
-      flask db migrate -m "Latest Updates";
-      flask db upgrades;
+      pip install --upgrade pip
 
     startCommand: gunicorn wsgi:app
     repo: https://github.com/your-username/your-repo-name  # Replace with your actual repo

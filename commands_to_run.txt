@@ -1,21 +1,6 @@
 source ~/.zshrc;
 source venv/bin/activate;
-flask run
-
-
-export FLASK_APP=wsgi.py
-
-updated by ai
-
-source ~/.zshrc;
-source venv/bin/activate;
 export FLASK_APP=wsgi.py;
-export FLASK_ENV=development;
 flask run
 
-python3 tables.py #creates tables sqlite datab
-source venv/bin/activate
-export FLASK_APP=wsgi.py
-export FLASK_ENV=development
-export FLASK_DEBUG=1
-flask run --debug
+

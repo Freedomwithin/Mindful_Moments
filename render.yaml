@@ -6,16 +6,15 @@ services:
     port: 5000
 
     build:
-      - pip install --upgrade pip
-      - pip install -r requirements.txt  # Install requirements FIRST (Crucial!)
-      - flask db upgrade  # Run migrations AFTER requirements (Crucial!)
+      - pip install -r requirements.txt  # Install requirements (including Flask-Migrate and psycopg2) FIRST
+      - flask db upgrade  # Run migrations AFTER requirements
 
     startCommand: gunicorn wsgi:app
-    repo: https://github.com/Freedomwithin/Mindful_Moments  # Replace with your actual repo
+    repo: https://github.com/Freedomwithin/Mindful_Moments
 
     envVars:
-      - key: SECRET_KEY  # Only SECRET_KEY is needed here for this example.
-        value: K98caJwDtWPEVjqfE50c928k6PJ4aU45 # Set a strong, random secret key in production.
+      - key: SECRET_KEY
+        value: K98caJwDtWPEVjqfE50c928k6PJ4aU45  # Use a strong, random secret key in production
 
     healthCheckPath: /ping
     forwardLogs: true
@@ -23,4 +22,4 @@ services:
     autoscaling:
       minReplicas: 1
       maxReplicas: 3
-      targetCPUPercentage: 75    #   - name: www.yourdomain.com
+      targetCPUPercentage: 75

@@ -1,8 +1,7 @@
 import os
 from flask import Flask
-from .extensions import init_extensions  # Correct relative import
-from .config import config  # Correct relative import
-from flask_migrate import Migrate
+from .extensions import db, init_extensions  # Import db
+from .config import config
 
 def create_app(config_name=None):
     if config_name is None:
@@ -18,14 +17,17 @@ def create_app(config_name=None):
         raise ValueError("No SECRET_KEY set. Set it in Render environment variables.")
     app.config['SECRET_KEY'] = secret_key
 
-    # Database Configuration (Corrected - using app.root_path):
-    db_path = os.path.join(app.root_path, 'your_database.db')  # Or my_database.db if renamed
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + db_path  # 3 slashes are essential
+    # ***CRITICAL CHANGE: PostgreSQL Configuration (Use DATABASE_URL)***
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+    if not app.config['SQLALCHEMY_DATABASE_URI']:  # Important check
+        raise ValueError("No DATABASE_URL set. Set it in Render environment variables.")
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Good practice
+
 
     init_extensions(app)  # Initialize extensions *after* setting the URI
 
     from .models import db  # Correct relative import
-    migrate = Migrate(app, db)  # Initialize Migrate *after* db is initialized with app
+    # Migrate is initialized in extensions.py
 
     from .main.routes import main  # Correct relative import
     from .auth.routes import auth  # Correct relative import

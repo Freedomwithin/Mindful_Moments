@@ -6,21 +6,21 @@ services:
 
     # Remove the 'port' key here
 
-    buildCommand:  
-      - pip install -r requirements.txt
-      - flask db migrate
-      - flask db upgrade
+ buildCommand:
+  - pip install -r requirements.txt
+  - flask db migrate
+  - flask db upgrade
 
-    startCommand: gunicorn wsgi:app
-    repo: https://github.com/Freedomwithin/Mindful_Moments
+startCommand: gunicorn wsgi:app
+repo: https://github.com/Freedomwithin/Mindful_Moments
 
-    envVars:
-      - key: SECRET_KEY
-        value: uqRtbM8W3lzk3zuYJbLyyBf1zaHxkOU9u6Rupd3zsMk 
-      - key: DATABASE_URL 
-        value: ${DATABASE_URL}
+envVars:
+  - key: SECRET_KEY
+    value: uqRtbM8W3lzk3zuYJbLyyBf1zaHxkOU9u6Rupd3zsMk 
+  - key: DATABASE_URL 
+    value: ${DATABASE_URL}
 
-    healthCheckPath: /ping
+healthCheckPath: /ping
 
     # Remove 'forwardLogs' key
 

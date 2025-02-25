@@ -1,5 +1,5 @@
 services:
-  - type: web
+  - type: Web Service # Add the 'type' key here
     name: Mindful_Moments_1.0
     env: python
     plan: free

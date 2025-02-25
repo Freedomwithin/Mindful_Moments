@@ -15,8 +15,8 @@ services:
 
     envVars:
       - key: SECRET_KEY
-        value: uqRtbM8W3lzk3zuYJbLyyBf1zaHxkOU9u6Rupd3zsMk # Replace with a *strong*, random secret key
-      - key: DATABASE_URL  # This is where Render will inject the connection string
+        value: uqRtbM8W3lzk3zuYJbLyyBf1zaHxkOU9u6Rupd3zsMk 
+      - key: DATABASE_URL 
         value: ${DATABASE_URL}
 
     healthCheckPath: /ping
@@ -27,10 +27,7 @@ services:
       maxReplicas: 3
       targetCPUPercentage: 75
 
-databases:
-  - name: mindful-moments-db # This name is for Render's internal use
+databases:  # Corrected typo here
+  - name: mindful-moments-db 
     plan: free
     type: postgres
-    # databaseName: mindful_moments # If you upgrade to a paid plan, you'll likely use these.
-    # user: mindful_moments_user
-    # password: YourStrongPassword # Never put a real password here in production!

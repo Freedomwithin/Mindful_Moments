@@ -18,6 +18,7 @@ logger = logging.getLogger('alembic.env')
 
 def get_engine():
     DATABASE_URL = os.environ.get("DATABASE_URL")
+    print(f"DATABASE_URL: {DATABASE_URL}")  # Debug print statement
     if not DATABASE_URL:
         raise ValueError("DATABASE_URL environment variable is not set.")
     return create_engine(DATABASE_URL)
@@ -68,7 +69,9 @@ def run_migrations_offline():
     )
 
     with context.begin_transaction():
+        print("Before running migrations (offline)...")  # Debug print statement
         context.run_migrations()
+        print("After running migrations (offline)...")  # Debug print statement
 
 def run_migrations_online():
     """Run migrations in 'online' mode.
@@ -102,7 +105,9 @@ def run_migrations_online():
         )
 
         with context.begin_transaction():
+            print("Before running migrations (online)...")  # Debug print statement
             context.run_migrations()
+            print("After running migrations (online)...")  # Debug print statement
 
 if context.is_offline_mode():
     run_migrations_offline()

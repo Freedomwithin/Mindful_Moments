@@ -6,8 +6,7 @@ services:
     port: 5000
 
     build:
-      - flask db init
-      - flask db migrate -m "Initial migration"
+      - pip install -r requirements.txt
       - flask db upgrade  # Run migrations AFTER requirements
 
     startCommand: gunicorn wsgi:app

@@ -7,6 +7,8 @@ services:
 
     build:
       - pip install -r requirements.txt
+      - flask db init
+      - flask db migrate -m "Initial migration"
       - flask db upgrade  # Run migrations AFTER requirements
 
     startCommand: gunicorn wsgi:app

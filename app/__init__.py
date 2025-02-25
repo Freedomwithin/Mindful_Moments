@@ -1,6 +1,6 @@
 import os
 from flask import Flask
-from .extensions import db, init_extensions  # Import db
+from .extensions import db, login_manager, init_extensions  # Import db and login_manager
 from .config import config
 
 def create_app(config_name=None):
@@ -25,9 +25,7 @@ def create_app(config_name=None):
 
     init_extensions(app)  # Initialize extensions *after* setting the URI
 
-    from .models import db  # Correct relative import
-    # Migrate is initialized in extensions.py
-
+    from .models import User  # Import the User model here
     from .main.routes import main
     from .auth.routes import auth
     app.register_blueprint(main, url_prefix='/')
@@ -36,5 +34,14 @@ def create_app(config_name=None):
     @app.route('/ping')
     def ping():
         return 'pong'
+
+    # Initialize flask_login
+    login_manager.init_app(app)
+    login_manager.login_view = 'auth.login'  # Redirect to login page if not logged in
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        # Load the user from the database based on user_id
+        return User.query.get(int(user_id))
 
     return app

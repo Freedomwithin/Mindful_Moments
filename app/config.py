@@ -1,7 +1,10 @@
 import os
+import secrets
+
+basedir = os.path.abspath(os.path.dirname(__file__))  # Define basedir here
 
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY')
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'uqRtbM8W3lzk3zuYJbLyyBf1zaHxkOU9u6Rupd3zsMk' 
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     ENV = 'production'  # Set the environment to 'production'

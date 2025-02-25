@@ -17,7 +17,7 @@ services:
       - key: SECRET_KEY
         value: uqRtbM8W3lzk3zuYJbLyyBf1zaHxkOU9u6Rupd3zsMk # Replace with a *strong*, random secret key
       - key: DATABASE_URL  # This is where Render will inject the connection string
-        value: postgresql://mindful_moments_user:Jht8k8bsgGrYc5wtyLV8pWVqclwqSc1b@dpg-cuue9oqn91rc73fj2e10-a/mindful_moments
+        value: ${DATABASE_URL}
 
     healthCheckPath: /ping
     forwardLogs: true

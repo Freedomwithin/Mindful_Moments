@@ -1,21 +1,23 @@
 services:
   - type: web
-    name: mindful-moments-app
+    name: mMindful_Moments_1.0
     env: python
     plan: free
-    port: 5000
+    port: 5432
 
     build:
       - pip install -r requirements.txt
-      - python migrate.py 
-      - flask db upgrade  # Run migrations AFTER requirements
+      - flask db migrate 
+      - flask db upgrade
 
     startCommand: gunicorn wsgi:app
     repo: https://github.com/Freedomwithin/Mindful_Moments
 
     envVars:
       - key: SECRET_KEY
-        value: Jht8k8bsgGrYc5wtyLV8pWVqclwqSc1b  # Use a strong, random secret key in production
+        value: Jht8k8bsgGrYc5wtyLV8pWVqclwqSc1b # Replace with a *strong*, random secret key
+      - key: DATABASE_URL  # This is where Render will inject the connection string
+        value: ${DATABASE_URL}
 
     healthCheckPath: /ping
     forwardLogs: true
@@ -24,3 +26,11 @@ services:
       minReplicas: 1
       maxReplicas: 3
       targetCPUPercentage: 75
+
+databases:
+  - name: mindful-moments-db # This name is for Render's internal use
+    plan: free
+    type: postgres
+    # databaseName: mindful_moments # If you upgrade to a paid plan, you'll likely use these.
+    # user: mindful_moments_user
+    # password: YourStrongPassword # Never put a real password here in production!

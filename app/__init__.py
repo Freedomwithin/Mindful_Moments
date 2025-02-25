@@ -23,14 +23,13 @@ def create_app(config_name=None):
         raise ValueError("No DATABASE_URL set. Set it in Render environment variables.")
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Good practice
 
-
     init_extensions(app)  # Initialize extensions *after* setting the URI
 
     from .models import db  # Correct relative import
     # Migrate is initialized in extensions.py
 
-    from .main.routes import main  # Correct relative import
-    from .auth.routes import auth  # Correct relative import
+    from .main.routes import main
+    from .auth.routes import auth
     app.register_blueprint(main, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/auth')
 

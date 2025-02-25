@@ -1,11 +1,12 @@
 services:
   - type: web
-    name: mMindful_Moments_1.0
+    name: Mindful_Moments_1.0
     env: python
     plan: free
-    port: 5432
 
-    build:
+    # Remove the 'port' key here
+
+    buildCommand: 
       - pip install -r requirements.txt
       - flask db migrate 
       - flask db upgrade
@@ -16,18 +17,17 @@ services:
     envVars:
       - key: SECRET_KEY
         value: uqRtbM8W3lzk3zuYJbLyyBf1zaHxkOU9u6Rupd3zsMk 
-      - key: DATABASE_URL 
+      - key: DATABASE_URL  
         value: ${DATABASE_URL}
 
     healthCheckPath: /ping
-    forwardLogs: true
 
-    autoscaling:
-      minReplicas: 1
-      maxReplicas: 3
-      targetCPUPercentage: 75
+    # Remove 'forwardLogs' key
 
-databases:  # Corrected typo here
+    # Remove 'autoscaling' key
+
+databases:
   - name: mindful-moments-db 
     plan: free
-    type: postgres
+
+    # Remove the 'type' key here

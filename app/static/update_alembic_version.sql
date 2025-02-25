@@ -1,0 +1,1 @@
+INSERT INTO alembic_version (version_num) VALUES ('d1a502d2470b');

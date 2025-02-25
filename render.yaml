@@ -14,9 +14,9 @@ repo: https://github.com/Freedomwithin/Mindful_Moments
 
 envVars:
   - key: SECRET_KEY
-    value: uqRtbM8W3lzk3zuYJbLyyBf1zaHxkOU9u6Rupd3zsMk 
+  - value: uqRtbM8W3lzk3zuYJbLyyBf1zaHxkOU9u6Rupd3zsMk 
   - key: DATABASE_URL 
-    value: ${DATABASE_URL}
+  - value: ${DATABASE_URL}
 
 healthCheckPath: /ping
 

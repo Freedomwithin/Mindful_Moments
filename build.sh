@@ -6,4 +6,4 @@ pip install -r requirements.txt
 
 # Database migrations
 flask db migrate
-flask db upgrade
+flask db upgrade --force

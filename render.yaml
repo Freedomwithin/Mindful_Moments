@@ -6,9 +6,10 @@ services:
 
     # Remove the 'port' key here
 
-    buildCommand: 
-      - flask db migrate 
-      - flask db upgrade
+buildCommand:
+  - pip install -r requirements.txt
+  - flask db migrate
+  - flask db upgrade
 
     startCommand: gunicorn wsgi:app
     repo: https://github.com/Freedomwithin/Mindful_Moments

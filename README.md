@@ -2,6 +2,8 @@
 
 The Gratitude Journal is an innovative mobile application designed to enhance users' well-being by encouraging the practice of daily gratitude. At its core, the app utilizes advanced machine learning techniques to automatically categorize users' gratitude entries, providing insightful analytics about the areas of life for which they are most grateful.
 
+ [![Visit Mindful Momentsl](https://img.shields.io/badge/Visit-Mindful%20Moments-blue)](https://mindful-moments-1.onrender.com/)
+
 ## Key Features
 
 - **Daily Gratitude Entries:** Users can easily input their daily gratitude statements through a clean, intuitive interface.

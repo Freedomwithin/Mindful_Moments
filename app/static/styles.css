@@ -240,6 +240,62 @@ body.theme-green {
     --dark-color: var(--dark-green);
 }
 
+body.theme-purple {
+    --primary-color: var(--primary-purple);
+    --secondary-color: var(--secondary-purple);
+    --accent-color: var(--accent-purple);
+    --light-color: var(--light-purple);
+    --dark-color: var(--dark-purple);
+}
+
+body.theme-orange {
+    --primary-color: var(--primary-orange);
+    --secondary-color: var(--secondary-orange);
+    --accent-color: var(--accent-orange);
+    --light-color: var(--light-orange);
+    --dark-color: var(--dark-orange);
+}
+
+body.theme-teal {
+    --primary-color: var(--primary-teal);
+    --secondary-color: var(--secondary-teal);
+    --accent-color: var(--accent-teal);
+    --light-color: var(--light-teal);
+    --dark-color: var(--dark-teal);
+}
+
+body.theme-pink {
+    --primary-color: var(--primary-pink);
+    --secondary-color: var(--secondary-pink);
+    --accent-color: var(--accent-pink);
+    --light-color: var(--light-pink);
+    --dark-color: var(--dark-pink);
+}
+
+body.theme-gray {
+    --primary-color: var(--primary-gray);
+    --secondary-color: var(--secondary-gray);
+    --accent-color: var(--accent-gray);
+    --light-color: var(--light-gray);
+    --dark-color: var(--dark-gray);
+}
+
+body.theme-indigo {
+    --primary-color: var(--primary-indigo);
+    --secondary-color: var(--secondary-indigo);
+    --accent-color: var(--accent-indigo);
+    --light-color: var(--light-indigo);
+    --dark-color: var(--dark-indigo);
+}
+
+body.theme-yellow {
+    --primary-color: var(--primary-yellow);
+    --secondary-color: var(--secondary-yellow);
+    --accent-color: var(--accent-yellow);
+    --light-color: var(--light-yellow);
+    --dark-color: var(--dark-yellow);
+}
+
 /* Mood Chart Styles */
 #chartContainer {
     position: relative;

@@ -96,7 +96,7 @@ body {
 
 h1, h2 { color: var(--primary-color); }
 
-.navbar { 
+.navbar {
     background-color: var(--primary-color) !important;
 }
 
@@ -172,7 +172,7 @@ h1, h2 { color: var(--primary-color); }
 
 footer {
     background-color: var(--primary-color);
-    color: white;
+    color: white; /* Set the default footer text color to white */
     text-align: center;
     padding: 20px 0;
     margin-top: 40px;
@@ -187,6 +187,16 @@ footer a {
 footer a:hover {
     color: white;
     text-decoration: underline;
+}
+
+footer .text-muted {  /* Or create a custom class for the copyright */
+    color: #ffffff !important; /* Force white color */
+    border-radius: 5px; /* Optional: Add rounded corners */
+}
+
+/* Style for the copyright text */
+footer .text-muted { 
+    color: var(--dark-color); /* Or another contrasting color */
 }
 
 .form-control:focus {

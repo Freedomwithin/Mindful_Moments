@@ -1,24 +1,25 @@
+const themes = [
+    'theme-blue', 'theme-red', 'theme-green', 'theme-purple', 'theme-orange', 
+    'theme-teal', 'theme-pink', 'theme-gray', 'theme-indigo', 'theme-yellow'
+];
+
 function setTheme(themeName) {
     localStorage.setItem('theme', themeName);
     document.body.className = themeName;
 }
 
 function toggleTheme() {
-    if (localStorage.getItem('theme') === 'theme-blue') {
-        setTheme('theme-red');
-    } else if (localStorage.getItem('theme') === 'theme-red') {
-        setTheme('theme-green');
-    } else {
-        setTheme('theme-blue');
-    }
+    const currentTheme = localStorage.getItem('theme') || 'theme-blue';
+    const currentIndex = themes.indexOf(currentTheme);
+    const nextIndex = (currentIndex + 1) % themes.length;
+    setTheme(themes[nextIndex]);
 }
 
 // Immediately invoked function to set the theme on initial load
 (function () {
-    if (localStorage.getItem('theme') === 'theme-red') {
-        setTheme('theme-red');
-    } else if (localStorage.getItem('theme') === 'theme-green') {
-        setTheme('theme-green');
+    const savedTheme = localStorage.getItem('theme');
+    if (themes.includes(savedTheme)) {
+        setTheme(savedTheme);
     } else {
         setTheme('theme-blue');
     }

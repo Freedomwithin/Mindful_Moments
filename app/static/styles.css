@@ -1,5 +1,7 @@
+/* Base Variables */
 :root {
     --theme-color: #0000FF; /* Default theme color */
+
     /* Blue Theme */
     --primary-blue: #1a73e8;
     --secondary-blue: #4285f4;

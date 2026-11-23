@@ -170,7 +170,7 @@ class CloudMediaHandler(BaseHTTPRequestHandler):
                 out_template = os.path.join(DOWNLOAD_DIR, "%(title)s.%(ext)s")
                 cmd = [
                     "yt-dlp",
-                    "--extractor-args", "youtube:player_client=android,ios,web",
+                    "--extractor-args", "youtube:player_client=visionos,web",
                     "--no-check-certificates",
                     "--no-warnings",
                     "-x",
